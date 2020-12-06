@@ -12,13 +12,10 @@ library("plotly")
 library("shiny")
 
 
-# set up working directory to access csv
-# RStudio menu: Session -> Set Working Directory -> To Source File Location
-
 # =====================================================================
 # Read the U.S.Census "Historical Income Tables: Race" data
 # =====================================================================
-income_data <- read.csv("Census_Summary.csv", stringsAsFactors = FALSE, header=TRUE)
+income_data <- read.csv("https://raw.githubusercontent.com/brandonwong3/final-deliverable/master/Census_Summary.csv", stringsAsFactors = FALSE, header=TRUE)
 
 # Function to remove ',' in CSV data for # in the thousands
 replaceCommas<-function(x){
