@@ -158,7 +158,8 @@ page_one <- tabPanel(
     "benefited from this accumulated wealth. According to ",
     a("Racial Wealth Gap in the United States", href="https://www.thebalance.com/racial-wealth-gap-in-united-states-4169678"),
     " the racial wealth gap is widening."),
-  p(""),
+  br(),
+  img(src="https://cdn.vox-cdn.com/thumbor/pW69mUpDW5mxRD7Oo2n0cL-cfi8=/0x0:2400x1600/2820x1586/filters:focal(1280x496:1664x880)/cdn.vox-cdn.com/uploads/chorus_image/image/66634984/031920_healthfood_rg_21.0.jpg", width=600),
   p("")
   
 )
