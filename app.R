@@ -125,10 +125,89 @@ plot_income_percent <- function(by_column) {
     layout( legend=list(y=0.8, yanchor="top" ) )
 }
 
+# =====================================================================
+# Use data from the NCES (National Center for Educational Statistics)
+# 
+# =====================================================================
+nces_grad <- read.csv("https://raw.githubusercontent.com/brandonwong3/final-deliverable-ba-group-5/master/NCES_grad_rate.csv", 
+                      stringsAsFactors = FALSE, header=TRUE)
 
-# =====================================================================
+nces_enroll <- read.csv("https://raw.githubusercontent.com/brandonwong3/final-deliverable-ba-group-5/master/NCES_enrollment_rate.csv", 
+                        stringsAsFactors = FALSE, header=TRUE)
+
+
+# =======================
+# Wrangle NCES data
+# =======================
+
+# Clean Year data by removing " starting chort ....." in String
+# Rename value column 'His-panic' to 'Hispanic'
+nces_grad <- mutate(nces_grad, Year_clean = substr(nces_grad$Year, 1, 4))
+nces_grad <- nces_grad %>% 
+  select(Year_clean, White, Black, His..panic, Asian) %>% 
+  rename(Year=Year_clean, Hispanic=His..panic)
+
+nces_enroll <- mutate(nces_enroll, Year_clean = substr(nces_enroll$Year, 1, 4))
+nces_enroll <- nces_enroll %>% 
+  select(Year_clean, White, Black, Hispanic, Asian) %>% 
+  rename(Year=Year_clean)
+
+
+
+# ==========================
+# Format for plotting as long
+# ============================
+
+nces_grad_long <- gather(   # reassemble from long to wide to plot
+  nces_grad, # data frame to gather from
+  key = Race,  
+  value = Grad_Rate, 
+  -Year # columns to gather data from, as in dplyr's `select 
+)
+
+nces_enroll_long <- gather(   # reassemble from long to wide to plot
+  nces_enroll, # data frame to gather from
+  key = Race,  
+  value = Enroll_Rate, 
+  -Year # columns to gather data from, as in dplyr's `select 
+)
+
+# Join data sets
+combined_nces <- left_join(nces_enroll_long, nces_grad_long, 
+                           by=c('Year'='Year', 'Race'='Race'))
+combined_nces <- combined_nces %>% 
+  rename("Graduation"="Grad_Rate", "Enrollment"="Enroll_Rate") %>% 
+  filter(Year >= 2000)
+
+
+# ===================================
+# Plot NCES
+# ===================================
+
+plot_nces <- function(by_column) {
+  by_column <- ensym(by_column)
+  
+  df <- ggplot(data = combined_nces) +
+    geom_line(mapping = aes(x=Year, y=!!by_column, group=Race, color=Race)) +
+    
+    scale_x_discrete(breaks=seq(2000, 2020, 2)) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    
+    # Add labels 
+    labs(
+      title = paste("College", by_column,"Rates"), # plot title 
+      x = "Year", # x-axis label
+      y = "Percent (%)", # y-axis label
+      color = "Race" # legend label for the "color" property
+    ) 
+  
+  df
+}
+
+
+# ===================================
 # UI code
-# =====================================================================
+# ===================================
 
 # Define the first page content; uses `tabPanel()` and `sidebarLayout()` 
 # layout functions together (as an example)
@@ -184,7 +263,7 @@ page_two <- tabPanel(
   
   mainPanel(
     h3("Historical Income Inequality"),
-    br(),
+    p("Source: U.S. Census Bureau (CPS ASEC)"),
     plotlyOutput(outputId = "income_plot"),    # panel output
     br(),
     
@@ -220,7 +299,7 @@ page_three <- tabPanel(
   
   mainPanel(
     h3("Historical Income Inequality"),
-    br(),
+    p("Source: U.S. Census Bureau (CPS ASEC)"),
     plotlyOutput(outputId = "compare_plot"),    # panel output
     br(),
     
@@ -234,9 +313,46 @@ page_three <- tabPanel(
   ) )
 )
 
-
-# Define content for the fourth page
+# Define content for the fourth page 
 page_four <- tabPanel(
+  "Higher Education tab", # label for the tab in the navbar
+  
+  sidebarLayout( sidebarPanel(
+    radioButtons(inputId = "rb_chosen_nces", # key assigned
+                 label = "College Education",
+                 choices = list("Enrollment Rate" = "Enroll", 
+                                "Graduation Rate" = "Grads")
+    ), # close radio button
+  ), # close sidebarLayout
+  
+  mainPanel(
+    h3("College Statistics"),
+    p("Source: National Center for Education Statistics"),
+    plotlyOutput(outputId = "nces_plot"),    # panel output
+    br(),
+    
+    br("The college enrollment rates, in general, matched the order of ",
+       "incomes by race, where Asians were at the top, followed by Whites, ",
+       "Hispanics then Blacks. The most encouraging news was that for all ",
+       "races, the percentage of students that enrolled in college after ",
+       "high school was above 50%."),
+    p(),
+    p("The graduation ratea of all races has trended up. Blacks have not increased ",
+      "their rates as much as the other races. When comparing the income ",
+      "data with college graduation data, the graduation data shows a much ",
+      "wider gap between Whites versus Blacks and Hispanics. An improvement ",
+      "in college graduation rates of Blacks could be a stimulus to potentially ",
+      "close the income disparity between races.")
+  ) )
+)
+
+
+# =====================================================================
+# Conclusion page
+# =====================================================================
+
+# Define content for the fifth page
+page_five <- tabPanel(
   "Conclusion tab", # label for the tab in the navbar 
   titlePanel("Final Thoughts on the Income Gap and Race"), # show with a displayed title
   
@@ -283,7 +399,8 @@ my_ui <- navbarPage(
   page_one,   # include the first page content
   page_two,   # include the second page content
   page_three, # include the third page content
-  page_four   # include the fourth page content
+  page_four,  # include the fourth page content
+  page_five   # include the fifth page content
 )
 
 
@@ -301,7 +418,17 @@ my_server <- function(input, output) {
   output$compare_plot <- renderPlotly({
     plot_income_percent(!!input$rb_chosen_c)
   })
+  
+  # Create and return line chart of Page Four
+  output$nces_plot <- renderPlotly({
+    if (!!input$rb_chosen_nces == "Enroll") {
+      plot_nces(Enrollment)
+    } else {
+      plot_nces(Graduation)
+    }
+  })
 }
+
 
 
 
