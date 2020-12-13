@@ -220,6 +220,8 @@ page_one <- tabPanel(
   "since the Civil Rights movement, the income gap between races remains.",
   "This project uses data from the ",
   a("U.S. Census Bureau", href="https://www.census.gov/data/tables/time-series/demo/income-poverty/historical-income-inequality.html"),
+  " and the ",
+  a("National Center for Education Statistics", href="https://nces.ed.gov/programs/digest/current_tables.asp"),
   " to explore this gap.",
   "",
   "",
