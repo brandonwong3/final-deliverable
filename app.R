@@ -235,13 +235,55 @@ page_three <- tabPanel(
 )
 
 
+# Define content for the fourth page
+page_four <- tabPanel(
+  "Conclusion tab", # label for the tab in the navbar 
+  titlePanel("Final Thoughts on the Income Gap and Race"), # show with a displayed title
+  
+ p("After our group conducted our research, it becomes clear that racial ",
+  "income gaps have only been sustained throughout recent history. Although ",
+  "Asians have been able to break out of the systemic income inequality present ",
+  "in the United States, one major takeaway from our analysis is that race still plays a  ",
+  "major role in the issue of the income gap in the United States; underprivileged communities, ",
+  "specifically black and hispanic communities, are still experiencing systemic oppression ",
+  "that has failed to lessen over the past decade. ",
+  "",
+  "",
+  "",
+  br(), br(),
+  img(src="https://borgenproject.org/wp-content/uploads/32855286416_066fc5371d_k-930x621.jpg")),
+
+p("Another takeaway from the data was how non-white racial groups, specifically ",
+  "Asians, have been successful in overtaking whites in income percentage, ",
+  "while other non-white racial groups (specifically Hispanics and blacks)  ",
+  "have had little to no success in matching whites in their income percentage. ",
+  "This gap is mostly due to systemic racism that is present in all forms of life: ",
+  "mass incarceration, over policing, and other forms of systemic racism lead to less ",
+  "opportunities for minorities, overall leading to less average income. ",
+  br(), br(),
+  img(src="https://www.pambazuka.org/sites/default/files/styles/flexslider_full/public/field/image/HT-natalie-keyssar-blm-protest-01-as-170106_3x2_1600.jpg?itok=L3QqU18j")),
+
+p("The final takeaway that we concluded from the data ",
+  "was that there is still much work to be done regarding ",
+  "the issue of the income gap and race. Although this project ",
+  "did allow us to gain a much better understanding of how ",
+  "race and economic issues are related, as a collective group ",
+  "we still possess only a small amount of the knowledge ",
+  "necessary to fully comprehend this issue. Therefore, as a ",
+  "future goal, we have all agreed to continue to pursue ",
+  "this topic in an attempt to solve the unjust inequalities ",
+  "present in the United States. "),
+br(), br(),
+img(src="https://www.mindingthecampus.org/wp-content/uploads/2019/03/hands-2082x1171.jpg"),
+)
 
 # Pass each page to a multi-page layout (`navbarPage`) 
 my_ui <- navbarPage(
   "My Application", # application title
   page_one,   # include the first page content
   page_two,   # include the second page content
-  page_three   # include the third page content
+  page_three, # include the third page content
+  page_four   # include the fourth page content
 )
 
 
